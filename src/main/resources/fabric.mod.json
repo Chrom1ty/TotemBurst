@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "totem-burst",
+	"version": "${version}",
+	"name": "Totem Burst",
+	"description": "Some effects on screen for destroying a Totem of Undying or unaliving someone",
+	"authors": [
+		"Chr0m1ty"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/totem-burst/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"totem.burst.TotemBurst"
+		],
+		"client": [
+			"totem.burst.client.TotemBurstClient"
+		],
+		"modmenu": [
+			"totem.burst.client.TotemBurstModMenu"
+		]
+	},
+	"mixins": [
+		"totem-burst.mixins.json",
+		{
+			"config": "totem-burst.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~1.21.8",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

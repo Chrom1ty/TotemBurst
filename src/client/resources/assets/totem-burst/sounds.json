@@ -1,0 +1,11 @@
+{
+  "kill_blast": {
+    "subtitle": "subtitles.totem-burst.kill_blast",
+    "sounds": [
+      {
+        "name": "totem-burst:kill_blast",
+        "stream": false
+      }
+    ]
+  }
+}
