@@ -3,7 +3,7 @@
 	"id": "totem-burst",
 	"version": "${version}",
 	"name": "Totem Burst",
-	"description": "Some effects on screen for destroying a Totem of Undying or unaliving someone",
+	"description": "Some effects on screen for destroying a Totem of Undying or Unaliving someone",
 	"authors": [
 		"Chr0m1ty"
 	],

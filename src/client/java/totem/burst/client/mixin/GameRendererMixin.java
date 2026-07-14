@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.Shadow;
 import totem.burst.client.ChromaticAberrationEffect;
+import totem.burst.client.ComboEffect;
 import totem.burst.client.RadialBlurEffect;
 
 @Mixin(GameRenderer.class)
@@ -34,15 +35,24 @@ public class GameRendererMixin {
     private void onRender(CallbackInfo ci) {
         ChromaticAberrationEffect.tick();
         RadialBlurEffect.tick();
+        ComboEffect.tick();
+        GameRenderer self = (GameRenderer)(Object)this;
 
+        boolean comboOn = ComboEffect.isActive || ComboEffect.intensity > 0.01f;
         boolean radialOn = RadialBlurEffect.isActive || RadialBlurEffect.intensity > 0.01f;
         boolean chromaOn = ChromaticAberrationEffect.isActive || ChromaticAberrationEffect.intensity > 0.01f;
 
         String desired = null;
-        if (radialOn) {
+        if (comboOn) {
+            desired = "combo_stack";
+        } else if (radialOn) {
             desired = "radial_blur";
         } else if (chromaOn) {
             desired = "chromatic_aberration";
+        }
+
+        if (self.currentPostEffect() == null) {
+            this.totemBurst$activeEffect = null;
         }
 
         if (desired != null) {

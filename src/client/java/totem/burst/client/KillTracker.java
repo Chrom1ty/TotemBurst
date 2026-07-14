@@ -10,7 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KillTracker {
     private static final long ATTACK_WINDOW_MS = 5000;
 
+    public static long COMBO_CHAIN_WINDOW_MS = 3000;
+
     private static final Map<Integer, Long> recentAttacks = new ConcurrentHashMap<>();
+
+    private static long lastKillTime = 0;
 
     public static void onAttack(int entityId) {
         pruneStale();
@@ -29,11 +33,22 @@ public class KillTracker {
         Long attackedAt = recentAttacks.remove(entityId);
         if (attackedAt == null) return;
 
-        long elapsed = System.currentTimeMillis() - attackedAt;
-        if (elapsed <= ATTACK_WINDOW_MS) {
+        long now = System.currentTimeMillis();
+        long elapsed = now - attackedAt;
+        if (elapsed > ATTACK_WINDOW_MS) return;
+
+        boolean isComboContinuation = (now - lastKillTime) <= COMBO_CHAIN_WINDOW_MS;
+
+        if (isComboContinuation) {
+            ComboEffect.trigger();
             RadialBlurEffect.trigger();
-            playKillSound();
+        } else {
+            ComboEffect.comboCount = 0;
+            RadialBlurEffect.trigger();
         }
+
+        lastKillTime = now;
+        playKillSound();
     }
 
     private static void playKillSound() {

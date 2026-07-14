@@ -1,0 +1,16 @@
+#version 150
+
+uniform sampler2D InSampler;
+uniform sampler2D OriginalSampler;
+uniform IntensityConfig {
+    float Intensity;
+};
+
+in vec2 texCoord;
+out vec4 fragColor;
+
+void main() {
+    vec4 contrasted = texture(InSampler, texCoord);
+    vec4 original = texture(OriginalSampler, texCoord);
+    fragColor = mix(original, contrasted, Intensity);
+}

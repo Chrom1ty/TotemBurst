@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import totem.burst.client.ChromaticAberrationEffect;
+import totem.burst.client.ComboEffect;
 import totem.burst.client.RadialBlurEffect;
 import totem.burst.client.TotemBurstConfig;
 
@@ -39,12 +40,7 @@ public class PostPassMixin {
         if (!this.name.contains("totem-burst")) return;
         if (!this.customUniforms.containsKey("IntensityConfig")) return;
 
-        float value;
-        if (this.name.contains("radial_blur")) {
-            value = RadialBlurEffect.intensity * (TotemBurstConfig.radialBlurStrength / 0.07f);
-        } else {
-            value = ChromaticAberrationEffect.intensity * (TotemBurstConfig.effectStrength / 0.03f);
-        }
+        float value = resolveIntensity(this.name);
 
         if (intensityBuffer == null) {
             intensityBuffer = RenderSystem.getDevice().createBuffer(
@@ -62,5 +58,29 @@ public class PostPassMixin {
         }
 
         this.customUniforms.put("IntensityConfig", intensityBuffer);
+    }
+
+    @Unique
+    private float resolveIntensity(String fullName) {
+        int lastSlash = fullName.lastIndexOf('/');
+        String effectId = lastSlash >= 0 ? fullName.substring(0, lastSlash) : fullName;
+        int passIndex = -1;
+        if (lastSlash >= 0) {
+            try {
+                passIndex = Integer.parseInt(fullName.substring(lastSlash + 1));
+            } catch (NumberFormatException ignored) {}
+        }
+
+        if (effectId.endsWith("combo_stack")) {
+            if (passIndex <= 1) {
+                return RadialBlurEffect.intensity * (TotemBurstConfig.radialBlurStrength / 0.07f);
+            } else {
+                return ComboEffect.intensity * (TotemBurstConfig.comboContrastStrength / 1.0f);
+            }
+        } else if (effectId.endsWith("radial_blur")) {
+            return RadialBlurEffect.intensity * (TotemBurstConfig.radialBlurStrength / 0.07f);
+        } else {
+            return ChromaticAberrationEffect.intensity * (TotemBurstConfig.effectStrength / 0.03f);
+        }
     }
 }

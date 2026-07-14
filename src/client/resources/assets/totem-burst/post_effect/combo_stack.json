@@ -1,0 +1,62 @@
+{
+  "targets": {
+    "swap1": {},
+    "swap2": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "totem-burst:radial_blur",
+      "inputs": [
+        { "sampler_name": "In", "target": "minecraft:main" }
+      ],
+      "output": "swap1",
+      "uniforms": {
+        "IntensityConfig": [
+          { "name": "Intensity", "type": "float", "value": 1.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "totem-burst:radial_blur_blit",
+      "inputs": [
+        { "sampler_name": "In", "target": "swap1" },
+        { "sampler_name": "Original", "target": "minecraft:main" }
+      ],
+      "output": "swap2",
+      "uniforms": {
+        "IntensityConfig": [
+          { "name": "Intensity", "type": "float", "value": 1.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "totem-burst:high_contrast",
+      "inputs": [
+        { "sampler_name": "In", "target": "swap2" }
+      ],
+      "output": "swap1",
+      "uniforms": {
+        "IntensityConfig": [
+          { "name": "Intensity", "type": "float", "value": 1.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "totem-burst:high_contrast_blit",
+      "inputs": [
+        { "sampler_name": "In", "target": "swap1" },
+        { "sampler_name": "Original", "target": "swap2" }
+      ],
+      "output": "minecraft:main",
+      "uniforms": {
+        "IntensityConfig": [
+          { "name": "Intensity", "type": "float", "value": 1.0 }
+        ]
+      }
+    }
+  ]
+}

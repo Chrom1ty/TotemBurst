@@ -1,0 +1,34 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "totem-burst:high_contrast",
+      "inputs": [
+        { "sampler_name": "In", "target": "minecraft:main" }
+      ],
+      "output": "swap",
+      "uniforms": {
+        "IntensityConfig": [
+          { "name": "Intensity", "type": "float", "value": 1.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "totem-burst:high_contrast_blit",
+      "inputs": [
+        { "sampler_name": "In", "target": "swap" },
+        { "sampler_name": "Original", "target": "minecraft:main" }
+      ],
+      "output": "minecraft:main",
+      "uniforms": {
+        "IntensityConfig": [
+          { "name": "Intensity", "type": "float", "value": 1.0 }
+        ]
+      }
+    }
+  ]
+}
