@@ -12,6 +12,10 @@ public class KillTracker {
 
     public static long COMBO_CHAIN_WINDOW_MS = 3000;
 
+    private static final long SOUND_THROTTLE_MS = 50;
+
+    private static long lastSoundPlayTime = 0;
+
     private static final Map<Integer, Long> recentAttacks = new ConcurrentHashMap<>();
 
     private static long lastKillTime = 0;
@@ -52,12 +56,19 @@ public class KillTracker {
     }
 
     private static void playKillSound() {
+        long now = System.currentTimeMillis();
+        if (now - lastSoundPlayTime < SOUND_THROTTLE_MS) return;
+        lastSoundPlayTime = now;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        mc.getSoundManager().play(
-                SimpleSoundInstance.forUI(TotemBurstSounds.KILL_BLAST, 1.0f, 1.0f)
-        );
+        mc.execute(() -> {
+            if (mc.player != null) {
+                mc.getSoundManager().play(
+                        SimpleSoundInstance.forUI(TotemBurstSounds.KILL_BLAST, 1.0f, 1.0f)
+                );
+            }
+        });
     }
 
     private static void pruneStale() {
